@@ -1,0 +1,28 @@
+# Documentation-only repository. Operational artifacts stay private.
+
+# Secrets — never
+.env
+.env.*
+*.pem
+*.key
+credentials*.json
+token*.json
+
+# Live exports and blueprints — may contain identifiers
+blueprints/
+exports/
+workspace/
+*.blueprint.json
+scenario-*.json
+
+# Real workbooks and data
+*.xlsx
+*.xlsm
+*.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
