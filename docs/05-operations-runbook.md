@@ -19,13 +19,9 @@ The storage API throttles under concurrent load. Sleep modules follow storage op
 
 Every tracker run reports an operation count. Because the module topology is fixed, the count tells you how far it got.
 
-| Family | Ops at failure | Died at |
-|---|---:|---|
-| Standard | 10 | Export header read |
-| Specialized | 9 | Export header read |
-| Either | 32 | Completed successfully |
+Each intake family has a known operation count at every stage boundary, and a completed run has a known total. Comparing the reported count against those markers identifies the stage that failed.
 
-A standard-family scenario warning at 10 operations died reading the export header - before any decisioning, before any write. That's a read-path or configuration problem, not a mapping problem. Knowing this collapses most investigations to a single module.
+A scenario that stops at the export-header read failed before any decisioning and before any write, which points at the read path or the module configuration rather than at mapping. That distinction collapses most investigations to a single module.
 
 ### Empty intake folder
 
@@ -57,7 +53,7 @@ Diff the newest published copy against the previous one. Publication is timestam
 
 | Control | Prevents | Note |
 |---|---|---|
-| Exactly-one-file intake | Ambiguous processing when multiple exports are staged | Standard family iterates up to 10 files - multiple files means multiple processings |
+| Exactly-one-file intake | Ambiguous processing when multiple exports are staged | The standard family iterates over every staged export, so multiple files mean multiple processings |
 | Marker-row region detection | Writing into historical or human-maintained zones | If the marker row changes, header detection must be revalidated |
 | Reporting-cutoff guard | Phantom future months | Throws when nothing valid exists |
 | Narrow window patching | Overwriting months outside the export's coverage | Standard across the family |

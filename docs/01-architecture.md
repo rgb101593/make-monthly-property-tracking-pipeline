@@ -13,7 +13,7 @@ The pipeline has six layers with defined responsibilities and data contracts.
 | Reporting model | Google Sheets | Union the feeds, derive period helpers | Dashboards blank or stale |
 | Presentation | Looker Studio | Per-property dashboard pages | Stakeholders see nothing |
 
-The reporting layer reads from a defined feed contract rather than from the operating model itself. The operating model is a formula-heavy workbook with 16 sheets and 77 charts. Two dynamic-array tabs expose its reporting data as normalized long-form tables:
+The reporting layer reads from a defined feed contract rather than from the operating model itself. The operating model is a formula-heavy workbook of many sheets and chart pages. Two dynamic-array tabs expose its reporting data as normalized long-form tables:
 
 ```
 SCF_Feed      → date, category, value
@@ -24,7 +24,7 @@ Everything downstream reads only these. The workbook's internal layout can chang
 
 ## Two intake families
 
-The seven properties split into two families by how their export arrives. This distinction drives trigger design, guard placement, and - importantly - failure triage.
+The properties split into two families by how their export arrives. This distinction drives trigger design, guard placement, and - importantly - failure triage.
 
 | | Family 1 - Routed (5 properties) | Family 2 - Manual (2 properties) |
 |---|---|---|
@@ -69,7 +69,7 @@ Steps 5–7 are where the engineering lives. Everything else is plumbing.
 
 ## Structure discovery, not configuration
 
-The naive version of this system hard-codes ranges per property. That fails immediately: the detailed import block in the operating model varies in height across properties (rows 7:358, 7:362, 7:364, 7:366, 7:283 across the family), and it shifts whenever someone inserts a row.
+The naive version of this system hard-codes ranges per property. That fails immediately: the detailed import block in the operating model varies in height across properties, and it shifts whenever someone inserts a row.
 
 Instead:
 
@@ -104,13 +104,10 @@ The authoritative model has one storage location. Copies in shared storage are d
 
 ## Scale
 
-| Dimension | Value |
+| Dimension | Shape |
 |---|---|
-| Properties in production | 7 |
-| Orchestration scenarios | 10 (1 router + 1 manual router + 7 trackers + 1 retention) |
-| Modules per tracker scenario | ~40 |
-| Operations per tracker run | 32 |
-| Typical run duration | ~60 seconds |
-| Operating model | 16 sheets, 77 charts, dynamic-array feed tabs |
-| Reporting model fields | 86 + 1 parameter |
-| Cadence | Monthly, days 15–30, fixed timezone |
+| Scenario family | One intake router, one manual fallback router, one tracker per property, one retention job |
+| Tracker topology | Fixed module sequence shared across every property |
+| Operating model | Multi-sheet workbook with chart pages and dynamic-array feed tabs |
+| Reporting model | Union of two feeds plus derived period fields and one parameter |
+| Cadence | Monthly, within a fixed window, in a fixed timezone |

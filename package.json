@@ -1,0 +1,10 @@
+{
+  "name": "monthly-property-tracking-reference",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Synthetic behavioral reference for selected control logic in the monthly property reporting pipeline.",
+  "scripts": {
+    "test": "node --test"
+  }
+}

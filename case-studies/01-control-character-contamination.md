@@ -10,7 +10,7 @@ The first root-cause theory was incorrect. This record includes the discarded hy
 
 ## Initial symptoms
 
-Five of seven property scenarios started warning on the same run. Same message, same module number. The two that didn't warn were the two with a different export layout - which initially looked meaningful and turned out to be a red herring.
+Most of the property scenarios started warning on the same run. Same message, same module. The ones that stayed quiet used a different export layout, which looked meaningful at first and turned out to be a red herring.
 
 The message itself:
 
@@ -23,7 +23,7 @@ Request path contains unescaped characters
 The URLs in the failing module contain Excel range addresses, which include colons:
 
 ```
-/workbook/worksheets('Sheet')/range(address='C5:N5')
+/workbook/worksheets('<sheet>')/range(address='<start>:<end>')
 ```
 
 A colon in a URL path segment can require escaping, and the error mentioned unescaped characters. This made colon handling the first hypothesis.
@@ -37,13 +37,13 @@ Initial checks focused on URL syntax rather than the stored byte values, so the 
 
 ## Finding it
 
-The scenario editor renders configuration fields as single-line text inputs. A field containing `...C5:N5')\r\n` renders identically to one containing `...C5:N5')`. The trailing bytes are invisible in the only view anyone normally uses.
+The scenario editor renders configuration fields as single-line text inputs. A field containing a trailing `\r\n` renders identically to one without it. The trailing bytes are invisible in the only view anyone normally uses.
 
 They are visible in the raw exported configuration:
 
 ```json
 {
-  "url": "/workbook/worksheets('PM_Standard')/range(address='C5:N5')\r\n"
+  "url": "/workbook/worksheets('<sheet>')/range(address='<start>:<end>')\r\n"
 }
 ```
 

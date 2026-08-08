@@ -133,7 +133,7 @@ Each boundary has a defined input and output contract.
 flowchart TB
     L1["Intake<br/><i>classify and stage</i>"]
     L2["Orchestration<br/><i>discover, decide, patch</i>"]
-    L3["Operating model<br/><i>16 sheets, formula-heavy</i>"]
+    L3["Operating model<br/><i>formula-heavy workbook</i>"]
     L4["Feed tabs<br/><i>date, category, value</i>"]
     L5["Reporting model<br/><i>union + derived periods</i>"]
     L6["Dashboards<br/><i>per-property pages</i>"]
@@ -144,4 +144,4 @@ flowchart TB
     L4 -.- N4
 ```
 
-The operating model contains 16 sheets, 77 charts, and variable row heights, so it is not used directly as a reporting source. Two dynamic-array tabs expose normalized long-form tables for downstream systems.
+The operating model contains many formula-driven sheets, chart pages, and variable row heights, so it is not used directly as a reporting source. Two dynamic-array tabs expose normalized long-form tables for downstream systems.

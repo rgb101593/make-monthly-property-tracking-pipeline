@@ -1,6 +1,6 @@
 # Documentation-only repository. Operational artifacts stay private.
 
-# Secrets — never
+# Secrets, never committed
 .env
 .env.*
 *.pem
@@ -8,7 +8,7 @@
 credentials*.json
 token*.json
 
-# Live exports and blueprints — may contain identifiers
+# Live exports and blueprints, which may contain identifiers
 blueprints/
 exports/
 workspace/
@@ -19,6 +19,8 @@ scenario-*.json
 *.xlsx
 *.xlsm
 *.csv
+
+node_modules/
 
 # OS / editor
 .DS_Store

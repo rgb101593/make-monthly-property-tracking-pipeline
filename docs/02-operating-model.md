@@ -1,6 +1,6 @@
 # 02 - The operating model
 
-The target of the automation is a 16-sheet Excel financial model, one per property. Understanding its structure explains most of the automation's design constraints.
+The target of the automation is a multi-sheet Excel financial model, one per property. Understanding its structure explains most of the automation's design constraints.
 
 > Investor-level data (roster, funded amounts, ownership splits, distributions) exists in the live workbook and is entirely excluded from this documentation. The sheet that holds it is described only by role.
 
@@ -17,7 +17,7 @@ The target of the automation is a 16-sheet Excel financial model, one per proper
 | Underwriting operating statement | Benchmark | - | Forward plan, row-based benchmark |
 | Underwriting summary | Benchmark | - | Deal constants |
 | Waterfall model | Benchmark | - | Partnership distribution logic |
-| 3 × graph sheets | Presentation | Core tabs | 77 charts total |
+| Graph sheets | Presentation | Core tabs | Chart pages |
 | Scenario analysis | Ancillary | Source Cash Flow | Sale/refinance scenarios |
 | Version, Notes, Incentive support | Admin | - | Change log and commentary |
 
@@ -37,7 +37,7 @@ The automation writes to exactly one zone of one sheet. Everything else is deriv
 
 Two conditions prevent the use of fixed ranges:
 
-The import block height varies by property. Across the seven properties it ends at rows 358, 362, 364, 366, or 283. There is no universal row count, so each property's bounds are derived separately.
+The import block height varies by property. There is no universal row count, so each property's bounds are derived separately.
 
 The height can also change over time. A row insertion near the marker shifted one property's bounds, requiring its ranges to be derived again.
 

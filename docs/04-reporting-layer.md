@@ -24,18 +24,11 @@ One workbook per property, four tabs:
 
 The two landing tabs are cleared and reloaded on each run. The two model tabs recalculate from them.
 
-Representative volume for one property:
-
-| Tab | Records | Categories | Coverage |
-|---|---:|---:|---|
-| `SCF_Feed` | ~3,850 | 148 | 26 monthly periods |
-| `Summary_Feed` | ~1,000 | 18 categories / 8 line types | 11 monthly periods |
-| `Master_Data` | ~4,850 | 161 combined | full range |
-| `T_Summary` | 33 | 11 metric groups | 3 trailing windows |
+`SCF_Feed` carries the largest row count and grows with each reporting period. `Summary_Feed` covers the comparison window only. `Master_Data` holds their union. `T_Summary` stays small because it holds one row per metric and trailing period.
 
 ## Master_Data
 
-The primary reporting model - 86 fields plus one user-facing parameter. It unions the detailed operating feed with the comparison feed and adds the derived fields the dashboards need.
+The primary reporting model, with many derived fields plus one user-facing parameter. It unions the detailed operating feed with the comparison feed and adds the derived fields the dashboards need.
 
 The feeds are unioned because they have different grains. `SCF_Feed` contains detailed operating history, while `Summary_Feed` contains actual-versus-underwriting comparison lines. A `source_type` field distinguishes them in the combined dataset, allowing one Looker data source to support both views.
 
@@ -68,7 +61,7 @@ The dashboards need "current month," "prior month," and trailing-window behavior
 
 ## T_Summary
 
-A compact model computed *from* `Master_Data` - 33 rows, one per metric-period combination: 11 metric groups × 3 trailing windows (T1, T3, T12).
+A compact model computed *from* `Master_Data`, holding one row per metric-period combination across three trailing windows (T1, T3, T12).
 
 ```
 Metric | Category | Period | Monthly Average | Annualized | Period Order
@@ -78,7 +71,7 @@ Dollar metrics are annualized by ×12. Ratio and occupancy metrics keep their na
 
 `Period Order` exists purely as a sort key, because `T1 / T3 / T12` sorts wrong alphabetically. A small thing that would otherwise be re-solved in every visual.
 
-The trailing-period visuals require one row per metric and period. `T_Summary` precomputes 33 rows instead of deriving them repeatedly from approximately 4,850 detailed records inside each visual.
+The trailing-period visuals require one row per metric and period. `T_Summary` precomputes them instead of deriving them repeatedly from the full detail table inside each visual.
 
 ## Dashboard design
 
@@ -125,7 +118,7 @@ These changes can produce blank or incorrect charts without raising errors. Feed
 
 Each property has its own folder, its own workbook, and its own two data sources, named by property and source type.
 
-Workbooks and data sources are kept separate by property. A workbook failure therefore affects one dashboard page, and each page's source is identifiable by name. This requires maintaining seven workbooks but prevents cross-property failures.
+Workbooks and data sources are kept separate by property. A workbook failure therefore affects one dashboard page, and each page's source is identifiable by name. This requires maintaining one workbook per property but prevents cross-property failures.
 
 Adding a property is therefore a fixed, repeatable procedure: create the folder, create the workbook, configure both model tabs, add the page and its two sources.
 

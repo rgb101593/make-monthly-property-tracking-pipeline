@@ -1,6 +1,6 @@
 # Case study 02 - A correct fix that caused a worse bug
 
-Sequence: a guard fix exposed an existing mapping defect; the next run corrupted 1,220 cells; comparison with the previous published output identified the damage; replay restored the affected data.
+Sequence: a guard fix exposed an existing mapping defect; the next run corrupted a year of monthly data; comparison with the previous published output identified the damage; replay restored it.
 
 The mapping defect existed before the guard change. Establishing that sequence prevented the team from reverting the correct guard fix.
 
@@ -12,7 +12,7 @@ A property's operating model was at July. The incoming export's latest month was
 
 Decision logic classified this as `OVERWRITE` but left the target column at the model's latest - July. The mapper then right-aligned June's data into July's column.
 
-Result: 308 changed cells. July's header and data were cleared and replaced with June's values. The model's latest month regressed from July to June.
+Result: the current month's header and data were cleared and replaced with the prior month's values. The model's latest month regressed from July to June.
 
 Diagnosis: `OVERWRITE` conflated "months match" with "months don't advance." A third mode was needed.
 
@@ -29,7 +29,7 @@ The fix was correct. It has not been revised since.
 
 ## Stage 3 - what the fix exposed
 
-The next run preserved July correctly. It also corrupted 1,220 cells spanning eleven months.
+The next run preserved the current month correctly. It also corrupted every mapped cell across the reporting window.
 
 The mapper inferred the width of the incoming value block from the first row returned by the API. That row was sparse - it had four populated columns where the block was eleven wide.
 
@@ -66,9 +66,9 @@ The mapper was rewritten to:
 
 Validated against a synthetic sparse-first-row fixture: all eleven months mapped correctly. Live diff against the prior version contained only the mapper change.
 
-Repair used the pipeline itself: the same verified export was copied from the archive back into intake and reprocessed. The run completed in ~60 seconds at the expected operation count.
+Repair used the pipeline itself: the same verified export was copied from the archive back into intake and reprocessed. The run completed in the normal runtime at the expected operation count.
 
-Verification: the new output matched the known-good pre-corruption baseline with zero cell differences through the full model range. All 1,220 damaged cells were correct. The model's latest month was June, July absent as intended, intake empty, export archived.
+Verification: the new output matched the known-good pre-corruption baseline with zero cell differences through the full model range. Every damaged cell was correct. The model's latest month was June, July absent as intended, intake empty, export archived.
 
 ## Changes made
 

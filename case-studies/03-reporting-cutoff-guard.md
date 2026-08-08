@@ -2,7 +2,7 @@
 
 Problem: The upstream property management system sometimes emits a column header for a month that has not closed. The data behind it is empty or partial, but the header parses cleanly as a valid, current month.
 
-Constraint: The automation cannot ask a human. It runs unattended, monthly, across seven properties.
+Constraint: The automation cannot ask a human. It runs unattended, monthly, across the portfolio.
 
 ---
 
@@ -57,13 +57,13 @@ Everything downstream consumes the guard's *effective* month and column. Nothing
 
 This placement matters. Guarding after the decision would mean the run mode was already chosen from bad input. Guarding at write time would mean header generation had already extended the model.
 
-## Preserving seven dialects
+## Preserving each property parser
 
 The guard has to re-parse the export header to walk back to a valid month. But the three export layouts label months differently, and each property's parser encodes its own quirks - which columns are subtotals, whether suffixes are allowed, whether month names are abbreviated or full, what the column offset base is.
 
 The tempting move is one canonical parser in the guard. That would have been a regression: a guard that parses differently from its upstream parser can disagree with it, and a disagreement between them is a silent misalignment.
 
-Each property's guard uses the same parsing rules as its upstream parser. The seven guards cover three parsing formats.
+Each property's guard uses the same parsing rules as its upstream parser. The guards cover several distinct export formats.
 
 ## Verification
 

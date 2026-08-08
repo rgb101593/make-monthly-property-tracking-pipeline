@@ -1,6 +1,6 @@
 # 03 - Orchestration
 
-The automation layer is ten Make.com scenarios: one automated intake router, one manual fallback router, seven property trackers, and one retention job.
+The automation layer is a family of Make.com scenarios: an automated intake router, a manual fallback router, one tracker per property, and a retention job.
 
 ## Scenario family
 
@@ -14,7 +14,7 @@ The automation layer is ten Make.com scenarios: one automated intake router, one
 
 ## The universal skeleton
 
-All seven trackers share a module topology. Core module IDs mean the same thing in every property - but identical modules do not mean identical configuration. Every path, range, workbook name, and spreadsheet ID is property-specific.
+All trackers share a module topology. Core module IDs mean the same thing in every property - but identical modules do not mean identical configuration. Every path, range, workbook name, and spreadsheet ID is property-specific.
 
 | Step | Module | Operation |
 |---:|---:|---|
@@ -43,7 +43,7 @@ All seven trackers share a module topology. Core module IDs mean the same thing 
 | - | 104–108 | Refresh reporting feed tabs |
 | - | *varies* | Archive the processed export |
 
-Because module IDs are stable across the family, a defect report naming "module 20" is immediately actionable on any property. That consistency is deliberate and worth the discipline it costs.
+Because module identifiers are stable across the family, a defect report naming one is actionable on any property. That consistency is deliberate and worth the discipline it costs.
 
 ## Decision logic
 
@@ -148,7 +148,7 @@ Published model copies are timestamped and never overwrite, so the distribution 
 
 Retention controls:
 
-- One router, seven independent routes - a failure in one property's cleanup cannot affect another's.
+- One router, one independent route per property, so a failure in one cleanup cannot affect another.
 - Deletes at most one file per property per run. A folder far over cap converges over several months rather than in one bulk deletion. Slower, but a logic error can destroy at most one file per property per month.
 - Matches on the property's exact model name, so a stray file in the folder is never a deletion candidate.
 - No-ops silently at or below cap. The common case produces no action and no noise.
