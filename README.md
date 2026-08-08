@@ -1,8 +1,10 @@
 # Property Reporting Automation
 
-A production monthly-reporting pipeline for a multifamily real estate portfolio. It takes a property manager's raw monthly export and, without human intervention, lands it in a financial operating model, patches the correct month window, republishes the workbook, refreshes a BI data model, and archives the source file.
+I built this monthly reporting pipeline to replace repetitive spreadsheet work across a multifamily real estate portfolio. It takes a property manager's export, updates the correct reporting period in the financial model, republishes the workbook, refreshes the reporting layer, and archives the source file.
 
-A portfolio of properties, one orchestration scenario each, plus shared intake and retention. Runs monthly, unattended.
+My work covered the process design, Make.com orchestration, Microsoft Graph integration, spreadsheet controls, reporting feeds, failure handling, and operational documentation.
+
+**Stack:** Make.com, Microsoft Graph, Excel, Google Sheets, Looker Studio, and JavaScript reference tests.
 
 > Confidentiality note: Property names, system identifiers, storage paths, endpoints, and investor data are replaced with neutral placeholders. The documented architecture, control flow, incidents, and engineering decisions reflect the production system.
 
@@ -12,7 +14,7 @@ A portfolio of properties, one orchestration scenario each, plus shared intake a
 
 A property management company delivers monthly operating statements as spreadsheet exports - one per property, each on its own schedule, each with a slightly different internal layout. Someone has to open a multi-sheet financial model per property, find the right month column, paste the numbers into the right rows, verify nothing downstream broke, and refresh the dashboards.
 
-Across the portfolio that's a recurring multi-day manual task where a single misaligned column silently corrupts a year of financial history.
+Across the portfolio, that is a slow manual task where a single misaligned column can silently corrupt historical data.
 
 ## The system
 
@@ -96,7 +98,7 @@ These case studies describe production defects, the investigation process, and t
 Run them with:
 
 ```
-npm test
+npm run verify
 ```
 
 The suites make no network, mailbox, storage, spreadsheet, or dashboard calls.
