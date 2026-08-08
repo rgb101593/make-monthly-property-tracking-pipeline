@@ -1,5 +1,8 @@
 export function validateBatch({ envelope, expectedIds }) {
-  if (envelope.status !== 200) {
+  if (!Number.isInteger(envelope.status)) {
+    throw new Error('batch envelope returned an invalid status');
+  }
+  if (envelope.status < 200 || envelope.status >= 300) {
     throw new Error(`batch envelope returned ${envelope.status}`);
   }
 
@@ -11,7 +14,10 @@ export function validateBatch({ envelope, expectedIds }) {
     if (!response) {
       throw new Error(`missing subresponse: ${id}`);
     }
-    if (response.status >= 400) {
+    if (!Number.isInteger(response.status)) {
+      throw new Error(`subresponse ${id} returned an invalid status`);
+    }
+    if (response.status < 200 || response.status >= 300) {
       throw new Error(`subresponse ${id} failed with ${response.status}`);
     }
     bodies[id] = response.body;

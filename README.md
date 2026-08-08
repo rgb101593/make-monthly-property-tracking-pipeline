@@ -66,7 +66,7 @@ Scheduled scenarios treat an empty intake folder as a successful no-op. Publishe
 These case studies describe production defects, the investigation process, and the resulting changes.
 
 - [Invisible control characters](case-studies/01-control-character-contamination.md) - an entire scenario family failing on the same module, traced to trailing `\r\n` inside URL fields. The first root-cause theory was wrong and is documented as such.
-- [Sparse-row width inference](case-studies/02-sparse-row-mapping-defect.md) - a fix that introduced a worse bug: inferring array width from the first returned row right-aligned the mapping and corrupted a year of monthly data. Includes the detection and repair path.
+- [Sparse-row width inference](case-studies/02-sparse-row-mapping-defect.md) - a fix that introduced a worse bug: inferring array width from the first returned row right-aligned the mapping and corrupted historical data. Includes the detection and repair path.
 - [The reporting-cutoff guard](case-studies/03-reporting-cutoff-guard.md) - preventing writes for reporting periods that have not closed.
 
 ## Documentation

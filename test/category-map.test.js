@@ -36,6 +36,27 @@ test('an alias resolves a source code onto its target', () => {
   assert.equal(values[0], 9);
 });
 
+test('alias lookup ignores surrounding whitespace and case', () => {
+  const { values } = mapCategories({
+    sourceRows: [{ code: '  cat_a_total ', value: 9 }],
+    targetCodes,
+    aliases: { CAT_A_TOTAL: 'CAT_A' }
+  });
+
+  assert.equal(values[0], 9);
+});
+
+test('a non-numeric source value is rejected', () => {
+  assert.throws(
+    () =>
+      mapCategories({
+        sourceRows: [{ code: 'CAT_A', value: '9' }],
+        targetCodes
+      }),
+    /finite number/
+  );
+});
+
 test('the zero-fill policy writes zero for an unmatched target', () => {
   const { values } = mapCategories({
     sourceRows: [{ code: 'CAT_A', value: 3 }],

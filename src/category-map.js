@@ -17,11 +17,19 @@ export function mapCategories({
   }
 
   const wanted = new Set(targetCodes.map(normalizeCode));
+  const normalizedAliases = new Map(
+    Object.entries(aliases).map(([source, target]) => [normalizeCode(source), normalizeCode(target)])
+  );
   const totals = new Map();
   const unmappedSourceCodes = [];
 
   for (const row of sourceRows) {
-    const resolved = normalizeCode(aliases[row.code] ?? row.code);
+    if (typeof row.value !== 'number' || !Number.isFinite(row.value)) {
+      throw new TypeError(`value for ${row.code} must be a finite number`);
+    }
+
+    const sourceCode = normalizeCode(row.code);
+    const resolved = normalizedAliases.get(sourceCode) ?? sourceCode;
     if (!wanted.has(resolved)) {
       if (row.value !== 0) unmappedSourceCodes.push(row.code);
       continue;

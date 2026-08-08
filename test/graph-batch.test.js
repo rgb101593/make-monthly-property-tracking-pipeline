@@ -32,6 +32,18 @@ test('a 200 envelope hiding a failed subrequest throws', () => {
   );
 });
 
+test('a redirect subresponse is rejected', () => {
+  const envelope = {
+    status: 200,
+    responses: [{ id: 'block_one', status: 302, body: { location: 'elsewhere' } }]
+  };
+
+  assert.throws(
+    () => validateBatch({ envelope, expectedIds: ['block_one'] }),
+    /block_one failed with 302/
+  );
+});
+
 test('a 200 envelope missing a subresponse throws', () => {
   const envelope = {
     status: 200,
@@ -48,6 +60,24 @@ test('a non-200 envelope throws', () => {
   assert.throws(
     () => validateBatch({ envelope: { status: 503, responses: [] }, expectedIds: ['block_one'] }),
     /envelope returned 503/
+  );
+});
+
+test('a batch envelope without a status is rejected', () => {
+  assert.throws(
+    () => validateBatch({ envelope: { responses: [] }, expectedIds: [] }),
+    /envelope returned an invalid status/
+  );
+});
+
+test('a subresponse without a status is rejected', () => {
+  assert.throws(
+    () =>
+      validateBatch({
+        envelope: { status: 200, responses: [{ id: 'block_one', body: {} }] },
+        expectedIds: ['block_one']
+      }),
+    /block_one returned an invalid status/
   );
 });
 

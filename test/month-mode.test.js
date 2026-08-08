@@ -78,3 +78,41 @@ test('a historical target left of the first data column throws', () => {
     RangeError
   );
 });
+
+test('an invalid calendar month is rejected', () => {
+  assert.throws(
+    () =>
+      selectMonthMode({
+        ...base,
+        modelMonth: { year: 2031, month: 12 },
+        exportMonth: { year: 2031, month: 13 }
+      }),
+    /month must be an integer from 1 through 12/
+  );
+});
+
+test('non-integer column positions are rejected', () => {
+  assert.throws(
+    () =>
+      selectMonthMode({
+        modelColumn: 20.5,
+        firstDataColumn: 5,
+        modelMonth: { year: 2031, month: 6 },
+        exportMonth: { year: 2031, month: 7 }
+      }),
+    /column positions must be positive integers/
+  );
+});
+
+test('the model column cannot be left of the first data column', () => {
+  assert.throws(
+    () =>
+      selectMonthMode({
+        modelColumn: 4,
+        firstDataColumn: 5,
+        modelMonth: { year: 2031, month: 6 },
+        exportMonth: { year: 2031, month: 6 }
+      }),
+    /model column cannot be left of the first data column/
+  );
+});

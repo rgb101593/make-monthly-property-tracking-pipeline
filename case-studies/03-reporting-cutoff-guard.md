@@ -8,7 +8,7 @@ Constraint: The automation cannot ask a human. It runs unattended, monthly, acro
 
 ## Validation problem
 
-The input is well formed. A value such as `Aug 2026` passes the parser even when the reporting period has not closed, and the source data contains no separate closed-period flag.
+The input is well formed. A future month value passes the parser even when the reporting period has not closed, and the source data contains no separate closed-period flag.
 
 An export month ahead of the model triggers `NEW_MONTH`, which generates missing header columns and extends the model. An invalid future month would therefore affect the model structure, trailing-window calculations, and downstream dashboards.
 
@@ -33,7 +33,7 @@ Given today's business date in a fixed timezone:
 
 The two-week split follows the normal upstream close schedule. Before mid-month, the latest permitted report is two months back. From mid-month onward, the previous month is permitted.
 
-The automation runs days 15–30, so the second branch is the normal path. The first exists because manual replays happen, and a replay on the 3rd must not accept a month that a scheduled run on the 20th would have accepted.
+The later branch is the normal scheduled path. The earlier branch exists for manual replays before the usual close window.
 
 ## Behavior
 
@@ -59,7 +59,7 @@ This placement matters. Guarding after the decision would mean the run mode was 
 
 ## Preserving each property parser
 
-The guard has to re-parse the export header to walk back to a valid month. But the three export layouts label months differently, and each property's parser encodes its own quirks - which columns are subtotals, whether suffixes are allowed, whether month names are abbreviated or full, what the column offset base is.
+The guard has to re-parse the export header to walk back to a valid month. Supported layouts label months differently, and each parser encodes its own quirks, including subtotal exclusions, optional suffixes, and month-name formats.
 
 The tempting move is one canonical parser in the guard. That would have been a regression: a guard that parses differently from its upstream parser can disagree with it, and a disagreement between them is a silent misalignment.
 
@@ -67,7 +67,7 @@ Each property's guard uses the same parsing rules as its upstream parser. The gu
 
 ## Verification
 
-Each property was tested with these cases:
+The guard was tested with these cases:
 
 | Test | Expected |
 |---|---|
@@ -77,7 +77,7 @@ Each property was tested with these cases:
 | Export containing no valid month | Throws |
 | Boundary: day 14 vs day 15 | Different cutoffs applied |
 
-Also verified that each guard's rollback used its own property's parsing rules, not a neighbor's.
+The tests also verify that rollback uses the matching parser rules rather than another layout's assumptions.
 
 ## Design decisions
 

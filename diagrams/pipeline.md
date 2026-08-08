@@ -9,7 +9,7 @@ flowchart TB
     subgraph INTAKE["Intake"]
         MAIL["Monthly export<br/>arrives by mail"]
         ROUTER["Intake router<br/>classify by property"]
-        MANUAL["Manual upload<br/>2 properties"]
+        MANUAL["Manual upload"]
         STAGE[("Per-property<br/>Incoming folder")]
     end
 
@@ -22,13 +22,13 @@ flowchart TB
     end
 
     subgraph MODEL["Operating model - Excel"]
-        SCF[["Source Cash Flow<br/>actuals spine"]]
+        SCF[["Actuals calculation layer"]]
         SUMM[["Summary<br/>actual vs underwriting"]]
         FEEDS[/"Feed tabs<br/>normalized long-form"/]
     end
 
     subgraph REPORT["Reporting"]
-        GS["Google Sheets<br/>Master_Data + T_Summary"]
+        GS["Google Sheets<br/>reporting models"]
         LOOKER["Looker Studio<br/>per-property pages"]
     end
 
@@ -76,13 +76,13 @@ flowchart TB
 
 `PRIOR_MONTH` exists because treating a stale export as an overwrite of the current column clears live data - see [case study 02](../case-studies/02-sparse-row-mapping-defect.md).
 
-## Two intake families
+## Intake families
 
 Why the same pipeline needs two failure interpretations.
 
 ```mermaid
 flowchart LR
-    subgraph F1["Family 1 - Routed (5 properties)"]
+    subgraph F1["Routed intake"]
         direction TB
         A1["Mail arrives"] --> A2["Router classifies<br/>by filename keyword"]
         A2 --> A3["Upload to Incoming"]
@@ -92,7 +92,7 @@ flowchart LR
         A5 -->|"no"| A7["Process"]
     end
 
-    subgraph F2["Family 2 - Manual (2 properties)"]
+    subgraph F2["Manual intake"]
         direction TB
         B1["Person uploads"] --> B2["Scheduled trigger<br/>fires in window"]
         B2 --> B3{"Incoming<br/>empty?"}
@@ -118,7 +118,7 @@ flowchart TB
 
     HARD --> C1{"All present?"}
     C1 -->|"no"| T1(["THROW"])
-    C1 -->|"yes"| C2{"All status &lt; 400?"}
+    C1 -->|"yes"| C2{"All status 2xx?"}
     C2 -->|"no"| T1
     C2 -->|"yes"| C3{"Dimensions<br/>match expected?"}
     C3 -->|"no"| T1
@@ -144,4 +144,4 @@ flowchart TB
     L4 -.- N4
 ```
 
-The operating model contains many formula-driven sheets, chart pages, and variable row heights, so it is not used directly as a reporting source. Two dynamic-array tabs expose normalized long-form tables for downstream systems.
+The operating model contains formula-driven sheets, chart pages, and variable row heights, so it is not used directly as a reporting source. Dedicated dynamic-array tabs expose normalized long-form tables for downstream systems.

@@ -1,6 +1,6 @@
 # Case study 01 - Invisible control characters, and a wrong hypothesis
 
-Symptom: Five property scenarios began emitting `Request path contains unescaped characters` warnings. All five failed at the same module.
+Symptom: Related property scenarios began emitting `Request path contains unescaped characters` warnings at the same operation.
 
 Actual cause: Trailing `\r\n` bytes stored inside URL configuration fields.
 
@@ -51,19 +51,19 @@ The bytes arrived the ordinary way: someone copied a URL out of a document or a 
 
 ## Scope of the failure
 
-The five affected scenarios were not independently broken. Four of them were cloned from the fifth.
+The affected scenarios were not independently broken. They shared a cloned configuration baseline.
 
-The field was already contaminated when the scenarios were cloned, so each copy contained the defect in the same module. A change in the receiving API's validation caused all five scenarios to begin failing at the same time.
+The field was already contaminated when the scenarios were cloned, so each copy contained the defect in the same operation. A change in the receiving API's validation caused the family to begin failing at the same time.
 
 This produced the most useful generalization from the incident:
 
-Because the scenarios were cloned from one source, the identical failures were investigated as a shared configuration defect rather than as five independent defects.
+Because the scenarios shared a source, the identical failures were investigated as a shared configuration defect rather than as unrelated defects.
 
-Investigating five properties separately would have meant five parallel dead ends. Recognizing the clone lineage collapsed it to one fix applied five times.
+Investigating properties separately would have created parallel dead ends. Recognizing the clone lineage reduced the incident to one repeatable fix.
 
 ## Resolution
 
-Strip the control characters; assert the fields are single-line. Applied across both affected modules in all five scenarios. Warnings stopped.
+Strip the control characters and assert that affected fields are single-line. Applying the same correction across the shared family stopped the warnings.
 
 ## Changes made
 

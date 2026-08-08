@@ -8,9 +8,9 @@ The mapping defect existed before the guard change. Establishing that sequence p
 
 ## Stage 1 - the original problem
 
-A property's operating model was at July. The incoming export's latest month was June - a stale file.
+A property's operating model was ahead of the incoming export, making the file stale.
 
-Decision logic classified this as `OVERWRITE` but left the target column at the model's latest - July. The mapper then right-aligned June's data into July's column.
+Decision logic classified this as `OVERWRITE` but left the target column at the model's latest period. The mapper then right-aligned stale data into the current column.
 
 Result: the current month's header and data were cleared and replaced with the prior month's values. The model's latest month regressed from July to June.
 
@@ -31,13 +31,13 @@ The fix was correct. It has not been revised since.
 
 The next run preserved the current month correctly. It also corrupted every mapped cell across the reporting window.
 
-The mapper inferred the width of the incoming value block from the first row returned by the API. That row was sparse - it had four populated columns where the block was eleven wide.
+The mapper inferred the width of the incoming value block from the first row returned by the API. That row was sparse and did not represent the authoritative block width.
 
 ```
-Assumed width:  4 columns   (from row 1)
-Actual width:  11 columns
+Assumed width:  width of the sparse first row
+Actual width:   authoritative model patch width
 
-Every subsequent row was right-aligned into a 4-column frame.
+Every subsequent row was right-aligned into the undersized frame.
 Eleven months of data landed in the wrong months.
 ```
 
@@ -64,11 +64,11 @@ The mapper was rewritten to:
 - Pad sparse rows through the existing safe-number path.
 - Never right-align from a truncated first row.
 
-Validated against a synthetic sparse-first-row fixture: all eleven months mapped correctly. Live diff against the prior version contained only the mapper change.
+Validated against a synthetic sparse-first-row fixture: every period mapped correctly. The controlled diff contained only the mapper change.
 
 Repair used the pipeline itself: the same verified export was copied from the archive back into intake and reprocessed. The run completed in the normal runtime at the expected operation count.
 
-Verification: the new output matched the known-good pre-corruption baseline with zero cell differences through the full model range. Every damaged cell was correct. The model's latest month was June, July absent as intended, intake empty, export archived.
+Verification: the repaired output matched a known-good pre-corruption baseline across the approved comparison range. The current period remained absent as intended, the intake cleared, and the export archived.
 
 ## Changes made
 
